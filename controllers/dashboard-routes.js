@@ -6,6 +6,9 @@ const { Post, User, Comment } = require('../models');
 router.get('/', (req, res) => {
   console.log('======================');
   Post.findAll({
+    where: {
+      user_id: req.session_id
+    },
     attributes: [
       'id',
       'post_text',
@@ -30,9 +33,9 @@ router.get('/', (req, res) => {
     .then(dbPostData => {
       const posts = dbPostData.map(post => post.get({ plain: true }));
 
-      res.render('homepage', { 
+      res.render('dashboard', { 
         posts,
-        loggedIn: req.session.loggedIn 
+        loggedIn: true
       });
     })
     .catch(err => {
@@ -41,20 +44,9 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/login', (req, res) => {
-  if (req.session.loggedIn) {
-    res.redirect('/');
-    return;
-  }
-  
-  res.render('login');
-});
 
-router.get('/signup', (req, res) => {
-  res.render('signup');
-});
 
-router.get('/post/:id', (req, res) => {
+router.get('/edit/:id', (req, res) => {
   Post.findOne({
     where: {
       id: req.params.id
@@ -88,9 +80,9 @@ router.get('/post/:id', (req, res) => {
 
     const post = dbPostData.get({ plain: true });
 
-    res.render('single-post', { 
+    res.render('edit-posts', { 
       post,
-      loggedIn: req.session.loggedIn 
+      loggedIn: true
     });
   })
   .catch(err => {
@@ -98,6 +90,10 @@ router.get('/post/:id', (req, res) => {
     res.status(500).json(err);
   });
 
+});
+
+router.get('/newpost', (req, res) => {
+  res.render('new-posts');
 });
 
 module.exports = router;
