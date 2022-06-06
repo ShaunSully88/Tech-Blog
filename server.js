@@ -2,6 +2,7 @@ const express = require('express');
 const sequelize = require('./config/connection');
 const path = require('path');
 const session = require('express-session');
+const bcrypt = require('bcrypt');
 
 const helpers = require('./utils/helpers');
 
